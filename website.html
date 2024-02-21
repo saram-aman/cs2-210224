@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload and Display Pictures</title>
+</head>
+<body>
+    <h1>Upload and Display Pictures</h1>
+    <input type="file" id="pictureInput" accept="image/*" multiple>
+    <button id="uploadButton">Upload</button>
+    <div id="imageContainer"></div>
+
+    <script>
+        // Function to upload picture
+        async function uploadPicture(file) {
+            const formData = new FormData();
+            formData.append('picture', file);
+
+            const response = await fetch('YOUR_AZURE_FUNCTION_ENDPOINT', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const imageUrl = await response.text();
+                displayImage(imageUrl);
+            } else {
+                console.error('Failed to upload picture');
+            }
+        }
+
+        // Function to display uploaded image
+        function displayImage(imageUrl) {
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.style.maxWidth = '300px'; // Set maximum width for display
+            document.getElementById('imageContainer').appendChild(img);
+        }
+
+        // Event listener for file input change
+        document.getElementById('pictureInput').addEventListener('change', function() {
+            const files = this.files;
+            if (files.length > 0) {
+                uploadPicture(files[0]);
+            }
+        });
+    </script>
+</body>
+</html>
